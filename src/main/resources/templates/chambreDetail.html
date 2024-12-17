@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chambre Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+	<link rel="stylesheet" th:href="@{/nav.css}">
+
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	  <a class="navbar-brand" href="#">
+		<img th:src="@{/images/logo.jpg}" alt="Hotel Logo" width="50" height="50" style="object-fit: cover;">
+
+	  </a>
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+	    <span class="navbar-toggler-icon"></span>
+	  </button>
+	  <div class="collapse navbar-collapse" id="navbarNav">
+		<ul class="navbar-nav">
+		             <li class="nav-item active">
+		                 <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+		             </li>
+	             <li class="nav-item active">
+	              <a class="nav-link" href="/reservations">Reservations</a>
+	            </li>
+		             <li class="nav-item">
+		                 <a class="nav-link disabled" href="/about" tabindex="-1" aria-disabled="true">About Us</a>
+		             </li>
+		         </ul>
+	  </div>
+	</nav>
+
+    <div class="container my-4">
+        <div class="row">
+            <div class="col-md-6">
+                <h2 th:text="'Chambre ' + ${chambre.numero}"></h2>
+                <img th:src="@{'/images/' + ${chambre.imageFileName}}" alt="chambre image" class="img-fluid mb-3">
+                <p><strong>Type:</strong> <span th:text="${chambre.type}"></span></p>
+                <p><strong>Capacité:</strong> <span th:text="${chambre.capacite}"></span></p>
+                <p><strong>Équipements:</strong> <span th:text="${chambre.equipements}"></span></p>
+				<p><strong>Etat:</strong> <span th:text="${chambre.etat}"></span></p>
+				<p><strong>prix:</strong> <span id="tarifJournalier" th:text="${chambre.tarifJournalier}"></span></p>
+				<form th:action="@{'/chambre/delete/' + ${chambre.id}}" method="post" style="display:inline;" onsubmit="return confirmDeletion();">
+					     <button type="submit" class="btn btn-danger">Delete</button>
+			    </form>
+
+				<a th:href="@{'/chambre/update/' + ${chambre.id}}" class="btn btn-warning">
+				    Update
+				</a>
+            </div>
+            
+			<div class="col-md-6">
+				
+			    <h3>Réservation</h3>
+				<form action="/submitReservation" method="post">
+				    <input type="text" name="chambreId" th:value="${chambre.id}" />
+
+				    <div class="form-group">
+				        <label for="dateArrivee">Date d'Arrivée</label>
+				        <input type="date" class="form-control" id="dateArrivee" name="dateArrivee" required onchange="calculateMontantTotal()">
+				    </div>
+				    <div class="form-group">
+				        <label for="dateDepart">Date de Départ</label>
+				        <input type="date" class="form-control" id="dateDepart" name="dateDepart" required onchange="calculateMontantTotal()">
+				    </div>
+				    <div class="form-group">
+				        <label for="nombrePersonnes">Nombre de Personnes</label>
+				        <input type="number" class="form-control" id="nombrePersonnes" name="nombrePersonnes" min="1" required>
+				    </div>
+				    <div class="form-group">
+				        <label for="typePaiement">Type de Paiement</label>
+				        <select class="form-control" id="typePaiement" name="typePaiement" required>
+				            <option value="carte bancaire">Carte Bancaire</option>
+				            <option value="espèces">Espèces</option>
+				        </select>
+				    </div>
+				    <div class="form-group">
+				        <label for="montantTotal">Montant Total (€)</label>
+				        <input type="number" class="form-control" id="montantTotal" name="montantTotal" step="0.01" readonly>
+				    </div>
+
+				    <button type="reset" class="btn btn-dark" style="float: right; margin-left: 10px;">Annuler</button>
+				    <button type="submit" class="btn btn-success" style="float: right;">Réservé</button>
+				</form>
+
+				<br>
+			</div>
+
+			<script>
+				const tarifJournalier = parseFloat(document.getElementById("tarifJournalier").innerText);
+
+			    function calculateMontantTotal() {
+			        const dateArrivee = new Date(document.getElementById("dateArrivee").value);
+			        const dateDepart = new Date(document.getElementById("dateDepart").value);
+
+			        if (dateArrivee && dateDepart && dateDepart > dateArrivee) {
+			            const differenceInTime = dateDepart - dateArrivee;
+			            const differenceInDays = differenceInTime / (1000 * 3600 * 24); 
+			            const montantTotal = differenceInDays * tarifJournalier;
+			            document.getElementById("montantTotal").value = montantTotal.toFixed(2);
+			        } else {
+			            document.getElementById("montantTotal").value = "";
+			        }
+			    }
+			</script>
+			<script>
+			  function confirmDeletion() {
+			    return confirm('Are you sure you want to delete this room?');
+			  }
+			</script>
+
+</body>
+</html>

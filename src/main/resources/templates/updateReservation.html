@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Reservation</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/nav.css}">
+
+</head>
+<body>
+	<div th:insert="fragment/navbar :: navbar"></div>
+
+	<br><br>
+
+<div class="container mt-5">
+    <h2>Update Reservation</h2>
+    
+    <form th:action="@{'/reservation/update/' + ${reservation.id}}" th:object="${reservation}" method="post" class="mt-4">
+        <div class="form-group">
+            <label for="dateArrivee">Date d'Arrivée</label>
+            <input type="text" id="dateArrivee" class="form-control" th:field="*{dateArrivee}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="dateDepart">Date de Départ</label>
+            <input type="text" id="dateDepart" class="form-control" th:field="*{dateDepart}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="nombrePersonnes">Nombre de Personnes</label>
+            <input type="number" id="nombrePersonnes" class="form-control" th:field="*{nombrePersonnes}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="typePaiement">Type de Paiement</label>
+            <select id="typePaiement" class="form-control" th:field="*{typePaiement}" required>
+                <option value="carte bancaire" th:selected="${reservation.typePaiement == 'carte bancaire'}">Carte Bancaire</option>
+                <option value="espèces" th:selected="${reservation.typePaiement == 'espèces'}">Espèces</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="montantTotal">Montant Total</label>
+            <input type="number" id="montantTotal" class="form-control" th:field="*{montantTotal}" step="0.01" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="/reservations" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+</body>
+</html>
